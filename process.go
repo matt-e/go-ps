@@ -36,6 +36,23 @@ func FilterProcesses(f func(Process) bool) ([]Process, error) {
 	return processes(f)
 }
 
+// Children returns children-processes
+func Children(pid int, recursive bool) ([]Process, error) {
+	children, err := FilterProcesses(func(p Process) bool {
+		return p.PPid() == pid
+	})
+	if err != nil || children == nil {
+		return nil, err
+	}
+	if recursive {
+		for _, child := range children {
+			grandchildren, _ := Children(child.Pid(), true)
+			children = append(children, grandchildren...)
+		}
+	}
+	return children, nil
+}
+
 // FindProcess looks up a single process by pid.
 //
 // Process will be nil and error will be nil if a matching process is

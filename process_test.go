@@ -75,3 +75,25 @@ func TestFilterProcesses(t *testing.T) {
 	}
 
 }
+
+func TestChildren(t *testing.T) {
+	// should have go
+	cmd := exec.Command("go")
+	err := cmd.Start()
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+	p, err := Children(os.Getpid(), true)
+	_ = cmd.Wait()
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+
+	if len(p) != 1 {
+		t.Fatal("should have one go processe")
+	}
+
+	if p[0].Executable() != "go" && p[0].Executable() != "go.exe" {
+		t.Fatal("should have one go processe")
+	}
+}
