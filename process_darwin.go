@@ -12,6 +12,7 @@ import (
 type DarwinProcess struct {
 	pid    int
 	ppid   int
+	pgid   int
 	binary string
 }
 
@@ -21,6 +22,10 @@ func (p *DarwinProcess) Pid() int {
 
 func (p *DarwinProcess) PPid() int {
 	return p.ppid
+}
+
+func (p *DarwinProcess) PGid() int {
+	return p.pgid
 }
 
 func (p *DarwinProcess) Executable() string {
@@ -66,6 +71,7 @@ func processes(f func(Process) bool) ([]Process, error) {
 		dp := &DarwinProcess{
 			pid:    int(proc.Pid),
 			ppid:   int(proc.PPid),
+			pgid:   int(proc.PGid),
 			binary: darwinCstring(proc.Comm),
 		}
 		if f != nil && !f(dp) {
@@ -139,5 +145,6 @@ type kinfoProc struct {
 	Comm [16]byte
 	_    [301]byte
 	PPid int32
-	_    [84]byte
+	PGid int32
+	_    [80]byte
 }

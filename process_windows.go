@@ -53,6 +53,10 @@ func (p *WindowsProcess) PPid() int {
 	return p.ppid
 }
 
+func (p *WindowsProcess) PGid() int {
+	return p.pid // TODO
+}
+
 func (p *WindowsProcess) Executable() string {
 	return p.exe
 }
